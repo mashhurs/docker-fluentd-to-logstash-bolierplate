@@ -1,0 +1,26 @@
+services:
+  fluentd:
+    image: fluent/fluentd:v1.17
+    container_name: fluentd
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+      - "9880:9880"
+    volumes:
+      - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
+    environment:
+      - FLUENTD_CONF=fluent.conf
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.14.3
+    container_name: logstash
+    ports:
+      - "5048:5048"
+      - "9600:9600"
+    environment:
+      - MONITORING_ENABLED=false
+      - XPACK_MONITORING_ENABLED=false
+      - LOG_LEVEL=info
+    volumes:
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+
